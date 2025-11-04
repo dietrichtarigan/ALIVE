@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { JobCategory } from "@/data/jobs";
 import { backendClient } from "@/lib/backend";
+import type { JobCategory } from "@/lib/domain/jobs";
 
 interface JobFormProps {
   variant?: "public" | "admin";

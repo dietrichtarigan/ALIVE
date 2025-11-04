@@ -7,8 +7,9 @@ import { JobForm, JobFormPayload } from "@/components/site/forms/job-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { JobPosting, jobPostings } from "@/data/jobs";
+import { jobPostings } from "@/data/jobs";
 import { backendClient } from "@/lib/backend";
+import type { JobPosting } from "@/lib/domain/jobs";
 
 interface StatusMessage {
   type: "success" | "error" | "info";
@@ -235,7 +236,7 @@ export function AdminJobsManager() {
           <JobForm
             key={formKey}
             variant="admin"
-            initialValues={selectedJob ?? undefined}
+            initialValues={selectedJob ? { ...selectedJob, highlight: selectedJob.highlight ?? undefined } : undefined}
             onSuccess={handleSuccess}
             authToken={token}
           />

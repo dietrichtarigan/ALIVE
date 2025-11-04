@@ -15,7 +15,8 @@ import { JobForm } from "@/components/site/forms/job-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { jobPostings } from "@/data/jobs";
+import { siteConfig } from "@/config/site";
+import { fetchJobList, fetchStoryList } from "@/lib/data/supabase-content";
 
 export const metadata: Metadata = {
   title: "Info Karier — ARCADE HIMAFI",
@@ -50,34 +51,37 @@ const kurasiSteps: KurasiStep[] = [
   },
 ];
 
-const highlightStats: Array<{ label: string; value: string; body: string; icon: LucideIcon }> = [
-  {
-    label: "Lowongan aktif",
-    value: "48",
-    body: "Dikurasi dan diperbarui setiap pekan oleh tim INFOPROF.",
-    icon: BriefcaseBusiness,
-  },
-  {
-    label: "Partner & komunitas",
-    value: "18",
-    body: "Organisasi yang aktif berkolaborasi dengan HIMAFI.",
-    icon: Handshake,
-  },
-  {
-    label: "Cerita alumni",
-    value: "32",
-    body: "Lintas profesi yang aktif berbagi pengalaman karier.",
-    icon: Layers,
-  },
-  {
-    label: "Jaringan aktif",
-    value: "400+",
-    body: "Massa dan alumni yang terhubung dalam kanal komunitas.",
-    icon: UsersRound,
-  },
-];
+export default async function InfoKarierPage() {
+  const [jobResult, storyResult] = await Promise.all([fetchJobList(), fetchStoryList()]);
 
-export default function InfoKarierPage() {
+  const highlightStats: Array<{ label: string; value: string; body: string; icon: LucideIcon }> = [
+    {
+      label: "Lowongan aktif",
+      value: String(jobResult.total ?? 0),
+      body: "Dikurasi dan diperbarui setiap pekan oleh tim INFOPROF.",
+      icon: BriefcaseBusiness,
+    },
+    {
+      label: "Partner & komunitas",
+      value: String(siteConfig.stats.partnerCompanies ?? 0),
+      body: "Organisasi yang aktif berkolaborasi dengan HIMAFI.",
+      icon: Handshake,
+    },
+    {
+      label: "Cerita alumni",
+      value: String(storyResult.total ?? 0),
+      body: "Lintas profesi yang aktif berbagi pengalaman karier.",
+      icon: Layers,
+    },
+    {
+      label: "Jaringan aktif",
+      value: siteConfig.stats.communityMembers ?? "0",
+      body: "Massa dan alumni yang terhubung dalam kanal komunitas.",
+      icon: UsersRound,
+    },
+  ];
+  const showFallbackNotice = jobResult.fallback || storyResult.fallback;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/40">
       <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50/30 to-white">
@@ -146,6 +150,11 @@ export default function InfoKarierPage() {
               </p>
             </div>
           </div>
+          {showFallbackNotice ? (
+            <div className="rounded-[28px] border border-dashed border-primary/50 bg-primary/10 p-6 text-sm text-primary">
+              Supabase belum terhubung atau tidak ada data tersimpan. Tambahkan info melalui dashboard admin untuk menampilkan peluang terbaru di halaman publik.
+            </div>
+          ) : null}
         </div>
       </section>
 
@@ -161,7 +170,7 @@ export default function InfoKarierPage() {
               <span>Ditinjau manual sebelum tayang</span>
             </div>
           </div>
-          <CareerBoard jobs={jobPostings} />
+          <CareerBoard jobs={jobResult.jobs} />
         </div>
       </section>
 

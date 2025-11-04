@@ -13,7 +13,7 @@ export interface JobRow {
   highlight: string | null;
   created_by: string | null;
   created_at: string;
-  updated_at: string | null;
+  updated_at: string;
 }
 
 export interface StoryRow {
@@ -33,7 +33,7 @@ export interface StoryRow {
   featured: boolean | null;
   created_by: string | null;
   created_at: string;
-  updated_at: string | null;
+  updated_at: string;
 }
 
 export interface AdminUserProfile {

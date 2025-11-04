@@ -7,9 +7,9 @@ import { StoryForm, StoryFormPayload } from "@/components/site/forms/story-form"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import type { AlumniStory } from "@/data/stories";
 import { alumniStories } from "@/data/stories";
 import { backendClient } from "@/lib/backend";
+import type { AlumniStory } from "@/lib/domain/stories";
 
 interface StatusMessage {
   type: "success" | "error" | "info";
@@ -253,7 +253,17 @@ export function AdminStoriesManager() {
           <StoryForm
             key={formKey}
             variant="admin"
-            initialValues={selectedStory ?? undefined}
+            initialValues={
+              selectedStory
+                ? {
+                    ...selectedStory,
+                    featured:
+                      typeof selectedStory.featured === "boolean"
+                        ? selectedStory.featured
+                        : undefined,
+                  }
+                : undefined
+            }
             onSuccess={handleSuccess}
             authToken={token}
           />

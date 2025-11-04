@@ -3,8 +3,8 @@
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { StoryTag } from "@/data/stories";
 import { backendClient } from "@/lib/backend";
+import type { StoryTag } from "@/lib/domain/stories";
 
 interface StoryFormProps {
   variant?: "public" | "admin";

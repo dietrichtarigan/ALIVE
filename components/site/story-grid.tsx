@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlumniStory, StoryTag } from "@/data/stories";
+import type { AlumniStory, StoryTag } from "@/lib/domain/stories";
 
 const filters: (StoryTag | "Semua")[] = [
   "Semua",

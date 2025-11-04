@@ -1,5 +1,5 @@
-import { JobCategory, JobPosting } from "@/data/jobs";
-import { AlumniStory, StoryTag } from "@/data/stories";
+import type { JobCategory, JobPosting } from "@/lib/domain/jobs";
+import type { AlumniStory, StoryTag } from "@/lib/domain/stories";
 
 import { JobRow, StoryRow } from "./types";
 
@@ -33,7 +33,7 @@ export function mapJobRow(row: JobRow): JobPosting {
     contact: row.contact,
     link: row.link,
     tags: normaliseStringArray(row.tags),
-    highlight: row.highlight ?? undefined,
+    highlight: row.highlight,
   };
 }
 

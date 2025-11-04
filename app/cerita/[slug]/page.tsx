@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { alumniStories } from "@/data/stories";
+import type { StoryTag } from "@/lib/domain/stories";
 
 export async function generateStaticParams() {
   return alumniStories.map((story) => ({ slug: story.slug }));
@@ -58,7 +59,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           <CardContent className="space-y-4 p-6">
             <p className="text-xl font-medium text-foreground">“{story.quote}”</p>
             <div className="flex flex-wrap gap-2">
-              {story.tags.map((tag) => (
+              {story.tags.map((tag: StoryTag) => (
                 <Badge key={tag} variant="secondary" className="text-xs">
                   {tag}
                 </Badge>
@@ -67,7 +68,7 @@ export default async function StoryDetailPage({ params }: StoryPageProps) {
           </CardContent>
         </Card>
         <div className="prose prose-invert mt-10 space-y-6 text-base leading-relaxed text-muted-foreground">
-          {story.body.map((paragraph) => (
+          {story.body.map((paragraph: string) => (
             <p key={paragraph}>{paragraph}</p>
           ))}
         </div>

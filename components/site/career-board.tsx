@@ -13,7 +13,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { JobCategory, JobPosting } from "@/data/jobs";
+import type { JobCategory, JobPosting } from "@/lib/domain/jobs";
 import { cn } from "@/lib/utils";
 
 const categories: (JobCategory | "Semua")[] = ["Semua", "Kerja", "Magang", "Beasiswa"];

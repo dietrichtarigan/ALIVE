@@ -1,15 +1,15 @@
+import type { LucideIcon } from "lucide-react";
 import { BriefcaseBusiness, CalendarDays, Database, Sparkles } from "lucide-react";
 
 import { HomeEcosystem } from "@/components/site/home/ecosystem";
 import { HomeHero } from "@/components/site/home/hero";
 import { HomePrograms } from "@/components/site/home/programs";
 import { HomeRoadmap } from "@/components/site/home/roadmap";
+import type { SpotlightCategory } from "@/components/site/home/spotlight";
 import { HomeSpotlight } from "@/components/site/home/spotlight";
 import { siteConfig } from "@/config/site";
 import { arcadeEvents } from "@/data/events";
-import { jobPostings } from "@/data/jobs";
-import { roadmapPhases } from "@/data/roadmap";
-import { alumniStories } from "@/data/stories";
+import { fetchEcosystems, fetchJobList, fetchPrograms, fetchRoadmap, fetchSpotlights, fetchStoryList } from "@/lib/data/supabase-content";
 
 const deadlineFormatter = new Intl.DateTimeFormat("id-ID", {
   day: "2-digit",
@@ -17,123 +17,151 @@ const deadlineFormatter = new Intl.DateTimeFormat("id-ID", {
   year: "numeric",
 });
 
-const highlightItems = [
-  {
-    id: jobPostings[0].id,
-    category: "Karier" as const,
-    title: jobPostings[0].title,
-    description: jobPostings[0].highlight ?? jobPostings[0].description,
-    link: "/karier",
-    meta: `${jobPostings[0].organization} · Batas ${deadlineFormatter.format(new Date(jobPostings[0].deadline))}`,
-    cta: "Lihat di INFOPROF",
-  },
-  {
-    id: arcadeEvents[0].id,
-    category: "Event" as const,
-    title: arcadeEvents[0].title,
-    description: arcadeEvents[0].description,
-    link: "/events",
-    meta: `${deadlineFormatter.format(new Date(arcadeEvents[0].date))} · ${arcadeEvents[0].location}`,
-    cta: "Lihat agenda",
-  },
-  {
-    id: alumniStories[0].id,
-    category: "Cerita" as const,
-    title: alumniStories[0].title,
-    description: alumniStories[0].summary,
-    link: `/cerita/${alumniStories[0].slug}`,
-    meta: `${alumniStories[0].name} · ${alumniStories[0].role}`,
-    cta: "Baca kisahnya",
-  },
-];
+const programIconMap: Record<string, LucideIcon> = {
+  BriefcaseBusiness,
+  CalendarDays,
+  Sparkles,
+  Database,
+};
 
-const pillars = [
-  {
-    title: "Info Karier & Beasiswa",
-    program: "INFOPROF",
-    description:
-      "Kurasi peluang kerja, magang, dan beasiswa yang relevan bagi massa HIMAFI dengan catatan deadline dan kontak mentor.",
-    icon: BriefcaseBusiness,
-    link: "/karier",
-  },
-  {
-    title: "Event & Forum Alumni",
-    program: "SINERGI",
-    description:
-      "Talkshow, company visit, dan forum diskusi untuk mempertemukan alumni lintas industri dengan mahasiswa.",
-    icon: CalendarDays,
-    link: "/events",
-  },
-  {
-    title: "Cerita Alumni",
-    program: "CeritaKita",
-    description:
-      "Artikel narasi dan newsletter yang merekam perjalanan alumni HIMAFI di berbagai bidang profesi.",
-    icon: Sparkles,
-    link: "/cerita",
-  },
-  {
-    title: "Database Alumni",
-    program: "ALIVE",
-    description:
-      "Portal LivingLink untuk memetakan sebaran alumni, bidang kerja, dan membuka jalur mentoring berkelanjutan.",
-    icon: Database,
-    link: "/alumni",
-  },
-];
+function resolveProgramIcon(name?: string | null) {
+  if (!name) return BriefcaseBusiness;
+  return programIconMap[name] ?? BriefcaseBusiness;
+}
 
-const ecosystemCards = [
-  {
-    title: "Integrasi Media Sosial",
-    description:
-      "Sinkron konten CeritaKita dan highlight event ke Instagram @careerhimafi agar informasi selalu sampai ke massa.",
-  },
-  {
-    title: "Pipeline Data Alumni",
-    description:
-      "Kolaborasi Google Form, Spreadsheet, dan rencana migrasi ke database MySQL untuk LivingLink.",
-  },
-  {
-    title: "Notifikasi & Newsletter",
-    description:
-      "Rencana automasi email bulanan yang merangkum peluang karier dan cerita alumni terbaru.",
-  },
-];
+function formatDeadline(input?: string | null) {
+  if (!input) return null;
+  const date = new Date(input);
+  if (Number.isNaN(date.getTime())) return null;
+  return deadlineFormatter.format(date);
+}
 
-export default function Home() {
+function asSpotlightCategory(value: string): SpotlightCategory {
+  if (value === "Event" || value === "Cerita" || value === "Karier") {
+    return value;
+  }
+  return "Karier";
+}
+
+export default async function Home() {
+  const [jobResult, storyResult, programResult, spotlightResult, ecosystemResult, roadmapResult] = await Promise.all([
+    fetchJobList(),
+    fetchStoryList(),
+    fetchPrograms(),
+    fetchSpotlights(),
+    fetchEcosystems(),
+    fetchRoadmap(),
+  ]);
+
   const heroMetrics = [
     {
       id: "jobs",
       label: "Lowongan & Beasiswa",
-      value: String(siteConfig.stats.careerPosts),
+      value: String(jobResult.total ?? 0),
       helper: "dikurasi oleh tim INFOPROF",
     },
     {
       id: "stories",
       label: "Cerita Alumni",
-      value: String(siteConfig.stats.alumniStories),
+      value: String(storyResult.total ?? 0),
       helper: "lintas bidang profesi",
     },
     {
       id: "partners",
       label: "Partner & Komunitas",
-      value: String(siteConfig.stats.partnerCompanies),
+      value: String(siteConfig.stats.partnerCompanies ?? 0),
       helper: "aktif berkolaborasi",
     },
     {
       id: "network",
       label: "Jaringan Aktif",
-      value: siteConfig.stats.communityMembers,
+      value: siteConfig.stats.communityMembers ?? "0",
       helper: "massa dan alumni",
     },
   ];
 
+  const programItems = programResult.programs.map((item) => ({
+    title: item.title,
+    program: item.program_code,
+    description: item.description,
+    link: item.link ?? "#",
+    icon: resolveProgramIcon(item.icon),
+  }));
+
+  const ecosystemItems = ecosystemResult.ecosystems
+    .sort((a, b) => a.display_order - b.display_order)
+    .map((item) => ({
+      title: item.title,
+      description: item.description,
+    }));
+
+    const roadmapPhases = [...roadmapResult.phases]
+      .sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0))
+      .map((phase) => {
+        const status: "done" | "in-progress" | "upcoming" =
+          phase.status === "completed" ? "done" : phase.status === "in_progress" ? "in-progress" : "upcoming";
+
+        return {
+          title: phase.title,
+          focus: phase.description ?? "",
+          period: phase.period,
+          deliverables: Array.isArray(phase.milestones) ? phase.milestones : [],
+          status,
+        };
+      });
+
+  const spotlightItems = (spotlightResult.spotlights.length > 0
+    ? spotlightResult.spotlights
+    : jobResult.jobs.slice(0, 3).map((job) => ({
+        id: job.id,
+        category: "Karier" as const,
+        title: job.title,
+        description: job.highlight ?? job.description,
+        link: "/karier",
+        meta: [job.organization, formatDeadline(job.deadline) ? `Batas ${formatDeadline(job.deadline)}` : null]
+          .filter(Boolean)
+          .join(" · "),
+        cta_text: "Lihat detail",
+      })))
+    .map((item) => ({
+      id: item.id,
+      category: asSpotlightCategory(item.category),
+      title: item.title,
+      description: item.description,
+      link: item.link ?? "#",
+      meta: item.meta ?? "",
+      cta: item.cta_text ?? undefined,
+    }));
+
+  const heroSpotlight = spotlightItems[0]
+    ?? (jobResult.jobs[0]
+      ? {
+          category: "Karier" as SpotlightCategory,
+          title: jobResult.jobs[0].title,
+          description: jobResult.jobs[0].highlight ?? jobResult.jobs[0].description,
+          meta: [jobResult.jobs[0].organization, formatDeadline(jobResult.jobs[0].deadline) ? `Batas ${formatDeadline(jobResult.jobs[0].deadline)}` : null]
+            .filter(Boolean)
+            .join(" · "),
+          link: "/karier",
+          cta: "Lihat detail",
+        }
+      : {
+          category: "Event" as SpotlightCategory,
+          title: arcadeEvents[0]?.title ?? "Belum ada sorotan",
+          description: arcadeEvents[0]?.description ?? "Tim ARCADE sedang menyiapkan sorotan perdana.",
+          meta: arcadeEvents[0]
+            ? `${deadlineFormatter.format(new Date(arcadeEvents[0].date))} · ${arcadeEvents[0].location}`
+            : "",
+          link: arcadeEvents[0]?.registrationLink ?? "#",
+          cta: arcadeEvents[0] ? "Lihat agenda" : "Tunggu update",
+        });
+
   return (
     <div className="bg-background">
-      <HomeHero metrics={heroMetrics} spotlight={highlightItems[0]} />
-      <HomePrograms items={pillars} />
-      <HomeSpotlight items={highlightItems} />
-      <HomeEcosystem items={ecosystemCards} />
+      <HomeHero metrics={heroMetrics} spotlight={heroSpotlight} />
+      <HomePrograms items={programItems} />
+      <HomeSpotlight items={spotlightItems} />
+      <HomeEcosystem items={ecosystemItems} />
       <HomeRoadmap phases={roadmapPhases} />
     </div>
   );
