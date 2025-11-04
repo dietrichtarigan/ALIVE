@@ -228,6 +228,12 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
     setStatus("submitting");
     setMessage("");
 
+    if (variant === "admin" && !authToken) {
+      setStatus("error");
+      setMessage("Sesi admin berakhir. Silakan masuk kembali sebelum mengirim data.");
+      return;
+    }
+
     const payload: JobFormPayload = {
       ...formState,
       requirements: formState.requirements,
@@ -268,6 +274,12 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
 
       const response = await fetch("/api/infoprof", {
         method: formState.id ? "PUT" : "POST",
+        headers:
+          variant === "admin" && authToken
+            ? {
+                Authorization: `Bearer ${authToken}`,
+              }
+            : undefined,
         body: requestBody,
       });
 

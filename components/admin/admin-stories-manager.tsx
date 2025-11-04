@@ -138,7 +138,7 @@ export function AdminStoriesManager() {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1.75fr_1.25fr]">
+    <div className="space-y-6">
       <Card className="border-border/40">
         <CardHeader>
           <CardTitle className="text-lg">Daftar Cerita Alumni</CardTitle>
@@ -179,7 +179,7 @@ export function AdminStoriesManager() {
                 ) : stories.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
-                      Belum ada naskah cerita. Tambahkan melalui form di samping.
+                      Belum ada naskah cerita. Tambahkan melalui form di bawah.
                     </td>
                   </tr>
                 ) : (
@@ -229,7 +229,7 @@ export function AdminStoriesManager() {
           </div>
         </CardContent>
       </Card>
-      <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
+  <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
