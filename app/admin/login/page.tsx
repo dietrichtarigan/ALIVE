@@ -1,11 +1,12 @@
+
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
+import { useAdminSession } from '@/components/admin/admin-session-provider'
 import { Button } from '@/components/ui/button'
 import { Section } from '@/components/ui/section'
-import { createSupabaseBrowserClient } from '@/lib/supabase-client'
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState('')
@@ -13,25 +14,30 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const router = useRouter()
-  const supabase = createSupabaseBrowserClient()
+  const { login, status } = useAdminSession()
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
+  useEffect(() => {
+    if (status === 'authenticated') {
+      router.replace('/admin')
+    }
+  }, [status, router])
+
+  const handleLogin = async (event: React.FormEvent) => {
+    event.preventDefault()
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    })
+    const result = await login({ email, password })
 
-    if (error) {
-      setError(error.message)
+    if (!result.ok) {
+      setError(result.message ?? 'Autentikasi admin gagal.')
       setLoading(false)
-    } else {
-      router.push('/admin')
-      router.refresh()
+      return
     }
+
+    setLoading(false)
+    router.replace('/admin')
+    router.refresh()
   }
 
   return (

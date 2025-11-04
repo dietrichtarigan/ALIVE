@@ -48,12 +48,18 @@ export function AdminJobsManager() {
   const [status, setStatus] = useState<StatusMessage | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
-  const { token } = useAdminSession();
+  const { token, status: sessionStatus } = useAdminSession();
+  const isSessionReady = sessionStatus === "authenticated";
 
   const formKey = useMemo(() => `${formMode}-${selectedJob?.id ?? "new"}`, [formMode, selectedJob?.id]);
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
+
+    if (!isSessionReady) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { status: httpStatus, data } = await backendClient.jobs.list(token);
@@ -83,7 +89,7 @@ export function AdminJobsManager() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, isSessionReady]);
 
   useEffect(() => {
     void loadJobs();
@@ -212,7 +218,7 @@ export function AdminJobsManager() {
           </div>
         </CardContent>
       </Card>
-  <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -233,13 +239,17 @@ export function AdminJobsManager() {
           </div>
         </CardHeader>
         <CardContent>
-          <JobForm
-            key={formKey}
-            variant="admin"
-            initialValues={selectedJob ? { ...selectedJob, highlight: selectedJob.highlight ?? undefined } : undefined}
-            onSuccess={handleSuccess}
-            authToken={token}
-          />
+          {isSessionReady ? (
+            <JobForm
+              key={formKey}
+              variant="admin"
+              initialValues={selectedJob ? { ...selectedJob, highlight: selectedJob.highlight ?? undefined } : undefined}
+              onSuccess={handleSuccess}
+              authToken={token}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Sesi admin belum aktif. Masuk kembali melalui halaman login.</p>
+          )}
         </CardContent>
       </Card>
     </div>

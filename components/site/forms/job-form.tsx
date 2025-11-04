@@ -228,12 +228,6 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
     setStatus("submitting");
     setMessage("");
 
-    if (variant === "admin" && !authToken) {
-      setStatus("error");
-      setMessage("Sesi admin berakhir. Silakan masuk kembali sebelum mengirim data.");
-      return;
-    }
-
     const payload: JobFormPayload = {
       ...formState,
       requirements: formState.requirements,

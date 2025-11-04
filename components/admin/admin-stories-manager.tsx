@@ -48,12 +48,18 @@ export function AdminStoriesManager() {
   const [status, setStatus] = useState<StatusMessage | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [selectedStory, setSelectedStory] = useState<AlumniStory | null>(null);
-  const { token } = useAdminSession();
+  const { token, status: sessionStatus } = useAdminSession();
+  const isSessionReady = sessionStatus === "authenticated";
 
   const formKey = useMemo(() => `${formMode}-${selectedStory?.id ?? "new"}`, [formMode, selectedStory?.id]);
 
   const loadStories = useCallback(async () => {
     setLoading(true);
+
+    if (!isSessionReady) {
+      setLoading(false);
+      return;
+    }
 
     try {
       const { status: httpStatus, data } = await backendClient.stories.list(token);
@@ -83,7 +89,7 @@ export function AdminStoriesManager() {
     } finally {
       setLoading(false);
     }
-  }, [token]);
+  }, [token, isSessionReady]);
 
   useEffect(() => {
     void loadStories();
@@ -229,7 +235,7 @@ export function AdminStoriesManager() {
           </div>
         </CardContent>
       </Card>
-  <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
+      <Card className="border-primary/30 bg-gradient-to-br from-primary/10 via-background to-background">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
@@ -250,23 +256,27 @@ export function AdminStoriesManager() {
           </div>
         </CardHeader>
         <CardContent>
-          <StoryForm
-            key={formKey}
-            variant="admin"
-            initialValues={
-              selectedStory
-                ? {
-                    ...selectedStory,
-                    featured:
-                      typeof selectedStory.featured === "boolean"
-                        ? selectedStory.featured
-                        : undefined,
-                  }
-                : undefined
-            }
-            onSuccess={handleSuccess}
-            authToken={token}
-          />
+          {isSessionReady ? (
+            <StoryForm
+              key={formKey}
+              variant="admin"
+              initialValues={
+                selectedStory
+                  ? {
+                      ...selectedStory,
+                      featured:
+                        typeof selectedStory.featured === "boolean"
+                          ? selectedStory.featured
+                          : undefined,
+                    }
+                  : undefined
+              }
+              onSuccess={handleSuccess}
+              authToken={token}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Sesi admin belum aktif. Masuk kembali melalui halaman login.</p>
+          )}
         </CardContent>
       </Card>
     </div>

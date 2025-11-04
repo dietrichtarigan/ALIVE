@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { ReactNode } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { ReactNode, useEffect } from "react";
 
 import { useAdminSession } from "@/components/admin/admin-session-provider";
 import ArcadeLogo from "@/components/logos/arcade";
@@ -23,11 +23,20 @@ const navItems = [
 
 export function AdminShell({ title, description, actions, children }: AdminShellProps) {
   const pathname = usePathname();
-  const { user, logout } = useAdminSession();
+  const router = useRouter();
+  const { user, logout, status } = useAdminSession();
 
   function handleLogout() {
     void logout();
   }
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/admin/login");
+    }
+  }, [status, router]);
+
+  const isSessionReady = status === "authenticated";
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -50,7 +59,7 @@ export function AdminShell({ title, description, actions, children }: AdminShell
             <Button asChild size="sm" variant="outline" className="sm:hidden">
               <Link href="/">Beranda</Link>
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleLogout}>
+            <Button size="sm" variant="ghost" onClick={handleLogout} disabled={!isSessionReady}>
               Keluar
             </Button>
           </div>
@@ -105,7 +114,15 @@ export function AdminShell({ title, description, actions, children }: AdminShell
               {actions ? <div className="flex flex-wrap gap-2">{actions}</div> : null}
             </div>
           </div>
-          <div className="pb-12">{children}</div>
+          <div className="pb-12">
+            {isSessionReady ? (
+              children
+            ) : (
+              <div className="flex min-h-[200px] items-center justify-center rounded-2xl border border-border/40 bg-background/80 text-sm text-muted-foreground">
+                {status === "loading" ? "Memuat sesi admin..." : "Mengalihkan ke halaman login..."}
+              </div>
+            )}
+          </div>
         </main>
       </div>
     </div>
