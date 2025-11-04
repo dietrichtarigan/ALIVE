@@ -49,7 +49,7 @@ export function AdminDashboard() {
         if (!isMounted) {
           return;
         }
-        setStatusMessage("Backend belum dikonfigurasi. Menampilkan data dummy untuk pengembangan.");
+  setStatusMessage("Supabase belum dikonfigurasi. Menampilkan data dummy untuk pengembangan.");
         setJobCount(jobPostings.length);
         setStoryCount(alumniStories.length);
         return;
@@ -131,18 +131,18 @@ export function AdminDashboard() {
       </div>
       <Card className="border-border/40">
         <CardHeader>
-          <CardTitle className="text-lg">Panduan Deploy di cPanel</CardTitle>
+          <CardTitle className="text-lg">Panduan Backend Supabase</CardTitle>
           <CardDescription>
-            Ringkasan tahapan host Next.js static export bersama backend PHP dan MySQL.
+            Ringkasan tahapan menghubungkan dashboard ARCADE dengan Supabase dan Vercel.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm text-muted-foreground">
           <ol className="list-decimal space-y-2 pl-5">
-            <li>Siapkan database <strong>phpMyAdmin</strong> dengan tabel jobs dan stories.</li>
-            <li>Upload skrip PHP API ke direktori <code>public_html/api</code> atau serupa.</li>
-            <li>Jalankan <code>npm run build</code> dilanjut <code>npm run export</code> lalu unggah folder <code>out</code>.</li>
-            <li>Setel variabel lingkungan <code>NEXT_PUBLIC_ARCADE_BACKEND</code> menuju domain API PHP (mis. <code>https://arcade.himafi.id/api</code>).</li>
-            <li>Pastikan <code>auth/login.php</code> mengembalikan token JSON untuk autentikasi panel admin.</li>
+            <li>Buat project Supabase, jalankan SQL <code>jobs</code> dan <code>stories</code>, lalu buat akun admin di tab Auth.</li>
+            <li>Salin <code>SUPABASE_URL</code>, <code>SUPABASE_ANON_KEY</code>, dan <code>SUPABASE_SERVICE_ROLE_KEY</code> ke Environment Variables Vercel.</li>
+            <li>Deploy Next.js ke Vercel (gratis), set <code>NODE_ENV=production</code> dan aktifkan region dekat Indonesia.</li>
+            <li>Set domain kustom <code>www.arcadehimafi.my.id</code> di Vercel, arahkan DNS CNAME/ALIAS sesuai petunjuk.</li>
+            <li>Uji login admin dan operasi CRUD INFOPROF/Cerita dari dashboard untuk memastikan izin Supabase benar.</li>
           </ol>
         </CardContent>
       </Card>

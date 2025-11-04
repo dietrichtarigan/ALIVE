@@ -62,8 +62,8 @@ export default function CeritaPage() {
           </CardHeader>
           <CardContent className="space-y-6 text-sm text-muted-foreground">
             <p>
-              Gunakan form berikut untuk mengirimkan cerita. Data akan langsung diteruskan ke backend PHP CeritaKita agar tim editorial bisa
-              menindaklanjuti. Jika backend belum aktif, aplikasi akan memberi tahu bahwa data disimpan sementara.
+              Gunakan form berikut untuk mengirimkan cerita. Data akan langsung tersimpan di Supabase CeritaKita agar tim editorial bisa
+              menindaklanjuti. Jika koneksi Supabase belum aktif, aplikasi akan memberi tahu bahwa data disimpan sementara.
             </p>
             <StoryForm variant="public" />
             <div className="flex flex-wrap gap-3">

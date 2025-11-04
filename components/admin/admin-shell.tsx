@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
 
+import { useAdminSession } from "@/components/admin/admin-session-provider";
 import ArcadeLogo from "@/components/logos/arcade";
 import { Button } from "@/components/ui/button";
 
@@ -22,6 +23,11 @@ const navItems = [
 
 export function AdminShell({ title, description, actions, children }: AdminShellProps) {
   const pathname = usePathname();
+  const { user, logout } = useAdminSession();
+
+  function handleLogout() {
+    void logout();
+  }
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -33,9 +39,21 @@ export function AdminShell({ title, description, actions, children }: AdminShell
             </span>
             <span>ARCADE Admin</span>
           </Link>
-          <Button asChild size="sm" variant="outline">
-            <Link href="/">Kembali ke situs</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <div className="hidden text-right text-xs sm:block">
+              <p className="text-sm font-semibold text-foreground">{user?.name ?? "Administrator"}</p>
+              <p className="text-muted-foreground">{user?.email ?? "admin@arcade"}</p>
+            </div>
+            <Button asChild size="sm" variant="outline" className="hidden sm:inline-flex">
+              <Link href="/">Kembali ke situs</Link>
+            </Button>
+            <Button asChild size="sm" variant="outline" className="sm:hidden">
+              <Link href="/">Beranda</Link>
+            </Button>
+            <Button size="sm" variant="ghost" onClick={handleLogout}>
+              Keluar
+            </Button>
+          </div>
         </div>
       </header>
       <div className="mx-auto flex max-w-7xl gap-6 px-6 py-8">

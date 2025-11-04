@@ -7,7 +7,7 @@ export default function AdminJobsPage() {
   return (
     <AdminShell
       title="Kelola Info Karier"
-      description="Tambahkan, perbarui, dan arsipkan data INFOPROF langsung dari backend PHP."
+      description="Tambahkan, perbarui, dan arsipkan data INFOPROF langsung dari Supabase."
     >
       <AdminJobsManager />
     </AdminShell>

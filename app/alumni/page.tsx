@@ -1,13 +1,9 @@
 import {
   ArrowRight,
   BarChart3,
-  Compass,
   Globe2,
-  Layers3,
-  LineChart,
   Network,
   Sparkles,
-  Target,
   TrendingUp,
 } from "lucide-react";
 import { Metadata } from "next";
@@ -17,12 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Section } from "@/components/ui/section";
-import {
-  alumniHighlights,
-  alumniInsights,
-  alumniRecords,
-  type RankedItem,
-} from "@/lib/alumni-insights";
+import { alumniInsights, type RankedItem } from "@/lib/alumni-insights";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -109,46 +100,6 @@ export default function AlumniDatabasePage() {
     ...item,
     name: toTitleCase(item.name),
   }));
-  const formatNumber = (value: number) => new Intl.NumberFormat("id-ID").format(value);
-
-  const highlightMetrics = [
-    {
-      label: "Leadership Presence",
-      value: `${alumniHighlights.leadershipShare}%`,
-      description: "Alumni duduk di posisi head, lead, manager, atau C-level.",
-      icon: Network,
-    },
-    {
-      label: "Global Mobility",
-      value: `${alumniHighlights.internationalShare}%`,
-      description: "Berkarier di luar Indonesia, membuka peluang koneksi internasional.",
-      icon: Globe2,
-    },
-    {
-      label: "Professional Reach",
-      value: alumniHighlights.averageConnections ? `${formatNumber(alumniHighlights.averageConnections)}+` : "-",
-      description: "Rata-rata jejaring LinkedIn tiap alumni sebagai kanal rekrutmen.",
-      icon: LineChart,
-    },
-    {
-      label: "Countries Represented",
-      value: formatNumber(alumniHighlights.countriesRepresented),
-      description: "Negara tujuan alumni yang dapat diaktifkan untuk program global.",
-      icon: Compass,
-    },
-    {
-      label: "Leading Industry",
-      value: topIndustries[0]?.name ?? "-",
-      description: `${topIndustries[0]?.count ?? 0} profil dominan dalam pipeline karier.`,
-      icon: Layers3,
-    },
-    {
-      label: "Signature Skill",
-      value: topSkills[0]?.name ?? "-",
-      description: `${topSkills[0]?.count ?? 0} alumni menyebut skill ini di profil mereka.`,
-      icon: Target,
-    },
-  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/50">
@@ -228,37 +179,6 @@ export default function AlumniDatabasePage() {
         </div>
       </Section>
 
-      <Section className="bg-white">
-        <div className="mx-auto max-w-6xl space-y-8 px-4 sm:px-8">
-          <div className="space-y-3">
-            <h2 className="text-[2.2rem] font-semibold tracking-tight text-slate-950">Insight Pulse</h2>
-            <p className="max-w-3xl text-[16px] leading-[1.75] text-slate-600">
-              Snapshot singkat yang membantu tim HIMAFI memprioritaskan program mentoring, ekspansi global, dan aktivasi alumni.
-            </p>
-          </div>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {highlightMetrics.map((metric) => {
-              const Icon = metric.icon;
-              return (
-                <Card
-                  key={metric.label}
-                  className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-slate-50 via-white to-white shadow-[0_18px_45px_-32px_rgba(15,23,42,0.45)]"
-                >
-                  <CardContent className="space-y-3 p-6">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Icon className="size-5" aria-hidden />
-                    </span>
-                    <p className="text-[13px] font-semibold uppercase tracking-[0.18em] text-slate-500">{metric.label}</p>
-                    <p className="text-[28px] font-semibold text-slate-900">{metric.value}</p>
-                    <p className="text-sm text-slate-600">{metric.description}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
-      </Section>
-
       <Section className="bg-gradient-to-b from-white to-muted/40">
         <div className="mx-auto flex max-w-6xl flex-col gap-16 px-4 sm:px-8">
           <div className="space-y-4">
@@ -305,69 +225,6 @@ export default function AlumniDatabasePage() {
               <RankedList title="Top Cities" items={topCities} />
             </div>
             <RankedList title="Most Mentioned Skills" subtitle="Tokenisasi dari kolom skills LinkedIn" items={topSkills} />
-          </div>
-        </div>
-      </Section>
-
-      <Section className="bg-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-8">
-          <div className="space-y-3">
-            <h2 className="text-[2.3rem] font-semibold tracking-tight text-slate-950">Opportunity Signals</h2>
-            <p className="max-w-3xl text-[16px] leading-[1.75] text-slate-600">
-              Kombinasi data industri, skill, dan lokasi membantu menentukan program prioritas untuk Career Planner AI HIMAFI.
-            </p>
-          </div>
-          <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-blue-100/30 via-white to-white">
-              <CardHeader className="space-y-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700">
-                  <Layers3 className="size-5" aria-hidden />
-                </span>
-                <CardTitle className="text-lg font-semibold text-slate-900">Industry x Skill Match</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-slate-600">
-                <p>
-                  {topIndustries.slice(0, 3).map((industry) => industry.name).join(", ")} menjadi jalur utama. Skill terkuat yang mendukungnya ialah {topSkills
-                    .slice(0, 3)
-                    .map((skill) => skill.name)
-                    .join(", ")}
-                  .
-                </p>
-                <p>
-                  Gunakan kombinasi ini untuk kurasi kelas Microcredential dan kurikulum Laboratorium HIMAFI.
-                </p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-emerald-100/30 via-white to-white">
-              <CardHeader className="space-y-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
-                  <Globe2 className="size-5" aria-hidden />
-                </span>
-                <CardTitle className="text-lg font-semibold text-slate-900">Global Chapter Plan</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-slate-600">
-                <p>
-                  Dengan {alumniHighlights.internationalShare}% alumni di luar negeri dan jaringan yang tersebar di {alumniHighlights.countriesRepresented} negara,
-                  fokuskan chapter komunitas di {topCountries.slice(0, 3).map((country) => country.name).join(", ")} sebagai hub mentoring lintas zona waktu.
-                </p>
-                <p>Aktifkan sesi virtual bulanan yang mengundang alumni global sharing best practice.</p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-3xl border border-slate-200/70 bg-gradient-to-br from-amber-100/30 via-white to-white">
-              <CardHeader className="space-y-3">
-                <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-amber-100 text-amber-700">
-                  <TrendingUp className="size-5" aria-hidden />
-                </span>
-                <CardTitle className="text-lg font-semibold text-slate-900">Mentoring Pipeline</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-slate-600">
-                <p>
-                  {alumniHighlights.leadershipShare}% alumni memegang posisi strategis. Padukan dengan {alumniInsights.advancedStudyShare}% yang menempuh studi lanjut
-                  untuk merancang mentorship lintasan karier akademik dan industrial.
-                </p>
-                <p>Prioritaskan pairing mahasiswa tingkat akhir dengan alumni berheadline leadership untuk simulasi wawancara dan project coaching.</p>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </Section>
@@ -427,51 +284,6 @@ export default function AlumniDatabasePage() {
               </CardContent>
             </Card>
           </div>
-        </div>
-      </Section>
-
-      <Section className="bg-gradient-to-b from-white via-muted/30 to-white">
-        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-8">
-          <div className="space-y-3">
-            <h2 className="text-[2.3rem] font-semibold tracking-tight text-slate-950">Alumni Directory</h2>
-            <p className="max-w-3xl text-[16px] leading-[1.75] text-slate-600">
-              Semua entri database dapat ditelusuri pada tabel berikut. Data ini menjadi sumber tunggal untuk kebutuhan analitik dan aktivasi komunitas.
-            </p>
-          </div>
-          <Card className="rounded-3xl border border-slate-200/70 bg-white shadow-[0_18px_45px_-30px_rgba(15,23,42,0.45)]">
-            <CardHeader className="pb-0">
-              <CardTitle className="text-lg font-semibold text-slate-900">Snapshot Profil Alumni</CardTitle>
-            </CardHeader>
-            <CardContent className="pt-4">
-              <div className="max-h-[460px] overflow-auto rounded-2xl border border-slate-200/60">
-                <table className="min-w-full divide-y divide-slate-200 text-sm">
-                  <thead className="bg-slate-50/80 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
-                    <tr>
-                      <th scope="col" className="px-6 py-4">Name</th>
-                      <th scope="col" className="px-6 py-4">Headline</th>
-                      <th scope="col" className="px-6 py-4">Location</th>
-                      <th scope="col" className="px-6 py-4">Company</th>
-                      <th scope="col" className="px-6 py-4">Connections</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 bg-white/50">
-                    {alumniRecords.map((alumni) => {
-                      const primaryExperience = alumni.experiences?.[0];
-                      return (
-                        <tr key={`${alumni.name}-${primaryExperience?.company ?? "na"}`} className="hover:bg-slate-50">
-                          <td className="px-6 py-3 font-medium text-slate-900">{alumni.name}</td>
-                          <td className="px-6 py-3 text-slate-600">{alumni.headline ?? "-"}</td>
-                          <td className="px-6 py-3 text-slate-600">{alumni.location ?? "-"}</td>
-                          <td className="px-6 py-3 text-slate-600">{primaryExperience?.company ?? "-"}</td>
-                          <td className="px-6 py-3 text-slate-600">{alumni.connections ?? "-"}</td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </Section>
 

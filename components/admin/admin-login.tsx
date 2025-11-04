@@ -66,7 +66,7 @@ export function AdminLogin() {
           {!message && !error && status === "loading" && <p>Memverifikasi sesi admin...</p>}
         </div>
         <p className="mt-6 text-center text-xs text-muted-foreground">
-          Pastikan endpoint PHP <code>auth/login.php</code> dan <code>auth/profile.php</code> tersedia pada backend cPanel.
+          Pastikan variabel lingkungan Supabase (<code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>, dan <code>SUPABASE_ANON_KEY</code>) sudah terpasang di Vercel.
         </p>
       </div>
     </div>

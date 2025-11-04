@@ -127,15 +127,6 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    if (!backendClient.isConfigured()) {
-      setState({
-        status: "authenticated",
-        token,
-        user: { name: "Demo Admin", email: "admin@arcade.local" },
-      });
-      return;
-    }
-
     try {
       const { status, data } = await backendClient.auth.profile(token);
 
@@ -179,20 +170,6 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
       setState({ status: "loading" });
 
       try {
-        if (!backendClient.isConfigured()) {
-          const demoToken = `dev-${Date.now()}`;
-          localStorage.setItem(STORAGE_KEY, demoToken);
-          setState({
-            status: "authenticated",
-            token: demoToken,
-            user: { name: "Demo Admin", email: payload.email },
-          });
-          return {
-            ok: true,
-            message: "Backend belum aktif. Mode demo diaktifkan.",
-          };
-        }
-
         const { status, data } = await backendClient.auth.login(payload);
         const parsed = parseAuthResponse(data);
 
@@ -229,7 +206,7 @@ export function AdminSessionProvider({ children }: { children: ReactNode }) {
     const token = localStorage.getItem(STORAGE_KEY) ?? state.token;
 
     try {
-      if (backendClient.isConfigured() && token) {
+      if (token) {
         await backendClient.auth.logout(token);
       }
     } catch (error) {

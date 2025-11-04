@@ -7,7 +7,7 @@ export default function AdminStoriesPage() {
   return (
     <AdminShell
       title="Kelola Cerita Alumni"
-      description="Kurasi dan publikasikan cerita alumni melalui backend CeritaKita."
+      description="Kurasi dan publikasikan cerita alumni menggunakan Supabase CeritaKita."
     >
       <AdminStoriesManager />
     </AdminShell>

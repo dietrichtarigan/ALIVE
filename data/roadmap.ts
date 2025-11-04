@@ -21,11 +21,11 @@ export const roadmapPhases: RoadmapPhase[] = [
   {
     title: "Tahap 2",
     period: "Jan 2026",
-    focus: "Integrasi backend PHP–MySQL",
+    focus: "Integrasi Supabase & dashboard admin",
     deliverables: [
       "CRUD Info Karier",
       "CMS Cerita Alumni",
-      "Sinkronisasi Google Sheet",
+      "Sinkronisasi Supabase ↔ data statis",
     ],
     status: "in-progress",
   },
@@ -43,9 +43,9 @@ export const roadmapPhases: RoadmapPhase[] = [
   {
     title: "Tahap 4",
     period: "Jul 2026",
-    focus: "Deploy & integrasi data eksternal",
+    focus: "Deploy Vercel & integrasi data eksternal",
     deliverables: [
-      "Deploy cPanel",
+      "Deploy Vercel + domain",
       "Integrasi LinkedIn insight",
       "Dashboard analitik",
     ],

@@ -34,7 +34,7 @@ export function HomeEcosystem({ items }: HomeEcosystemProps) {
         <h3 className="text-lg font-semibold text-primary">Fokus Pengembangan Backend</h3>
         <ul className="mt-4 space-y-3">
           <li>
-            <span className="font-medium text-foreground">Integrasi PHP–MySQL.</span> Pipeline CRUD untuk INFOPROF dan CeritaKita dengan autentikasi admin.
+            <span className="font-medium text-foreground">Integrasi Supabase.</span> Pipeline CRUD INFOPROF & CeritaKita dengan autentikasi admin dan audit log.
           </li>
           <li>
             <span className="font-medium text-foreground">LivingLink Alumni.</span> Data cleansing dan segmentasi kompetensi untuk memudahkan mentoring.

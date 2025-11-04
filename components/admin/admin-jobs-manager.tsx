@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useAdminSession } from "@/components/admin/admin-session-provider";
 import { JobForm, JobFormPayload } from "@/components/site/forms/job-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -46,35 +47,33 @@ export function AdminJobsManager() {
   const [status, setStatus] = useState<StatusMessage | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [selectedJob, setSelectedJob] = useState<JobPosting | null>(null);
+  const { token } = useAdminSession();
 
   const formKey = useMemo(() => `${formMode}-${selectedJob?.id ?? "new"}`, [formMode, selectedJob?.id]);
 
-  useEffect(() => {
-    void loadJobs();
-  }, []);
-
-  async function loadJobs() {
+  const loadJobs = useCallback(async () => {
     setLoading(true);
 
     try {
-      if (!backendClient.isConfigured()) {
-        setJobs(jobPostings);
-        setStatus({
-          type: "info",
-          message: "Backend belum aktif. Data karier menggunakan seed statis untuk pratinjau.",
-        });
-        return;
-      }
-
-  const { status: httpStatus, data } = await backendClient.jobs.list();
+      const { status: httpStatus, data } = await backendClient.jobs.list(token);
 
       if (httpStatus >= 400) {
         throw new Error(resolveMessage(data, "Gagal memuat data karier dari backend."));
       }
 
-      const records = extractArray<JobPosting>(data);
-      setJobs(records);
-      setStatus(null);
+  const records = extractArray<JobPosting>(data);
+  const fallback = Boolean(data && typeof data === "object" && (data as Record<string, unknown>).fallback);
+      const message = resolveMessage(data, "");
+
+  setJobs(fallback ? jobPostings : records);
+      setStatus(
+        fallback
+          ? {
+              type: "info",
+              message: message || "Supabase belum dikonfigurasi. Menampilkan data contoh.",
+            }
+          : null,
+      );
     } catch (error) {
       setStatus({
         type: "error",
@@ -83,7 +82,11 @@ export function AdminJobsManager() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token]);
+
+  useEffect(() => {
+    void loadJobs();
+  }, [loadJobs]);
 
   async function handleDelete(job: JobPosting) {
     const confirmation = window.confirm(`Hapus info "${job.title}" dari INFOPROF?`);
@@ -91,17 +94,8 @@ export function AdminJobsManager() {
       return;
     }
 
-    if (!backendClient.isConfigured()) {
-      setJobs((prev) => prev.filter((item) => item.id !== job.id));
-      setStatus({
-        type: "info",
-        message: "Backend belum aktif. Item dihapus dari tampilan lokal saja.",
-      });
-      return;
-    }
-
     try {
-  const { status: httpStatus, data } = await backendClient.jobs.remove({ id: job.id });
+      const { status: httpStatus, data } = await backendClient.jobs.remove({ id: job.id }, token);
       if (httpStatus >= 400) {
         throw new Error(resolveMessage(data, "Gagal menghapus info karier."));
       }
@@ -243,6 +237,7 @@ export function AdminJobsManager() {
             variant="admin"
             initialValues={selectedJob ?? undefined}
             onSuccess={handleSuccess}
+            authToken={token}
           />
         </CardContent>
       </Card>

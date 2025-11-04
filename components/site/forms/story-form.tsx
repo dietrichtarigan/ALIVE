@@ -91,7 +91,7 @@ export function StoryForm({ variant = "public", onSuccess, initialValues, authTo
   const helperText =
     variant === "public"
       ? "Bagikan kisah perjalanan kariermu. Tim CeritaKita akan melakukan kurasi editorial sebelum tayang."
-      : "Tambahkan atau perbarui cerita alumni langsung ke backend CeritaKita.";
+      : "Tambahkan atau perbarui cerita alumni langsung ke Supabase CeritaKita.";
 
   function resolveMessage(data: unknown, fallback: string) {
     if (data && typeof data === "object") {
@@ -126,8 +126,8 @@ export function StoryForm({ variant = "public", onSuccess, initialValues, authTo
           throw new Error(resolveMessage(data, "Gagal mengirim cerita ke backend CeritaKita."));
         }
 
-        setStatus("success");
-        setMessage(resolveMessage(data, "Cerita berhasil dikirim ke pipeline CeritaKita."));
+  setStatus("success");
+  setMessage(resolveMessage(data, "Cerita berhasil dikirim ke pipeline CeritaKita."));
 
         if (!formState.id) {
           setFormState(defaultState);
@@ -155,7 +155,7 @@ export function StoryForm({ variant = "public", onSuccess, initialValues, authTo
       setMessage(
         data?.message ||
           (data?.fallback
-            ? "Backend cerita belum aktif. Data tersimpan lokal untuk pengecekan."
+            ? "Supabase cerita belum aktif. Data tersimpan lokal untuk pengecekan."
             : "Cerita berhasil dikirim ke pipeline CeritaKita."),
       );
 
@@ -373,7 +373,7 @@ export function StoryForm({ variant = "public", onSuccess, initialValues, authTo
         )}
         {!backendClient.isConfigured() && (
           <p className="text-xs text-muted-foreground">
-            Set environment <code>NEXT_PUBLIC_ARCADE_BACKEND</code> agar data langsung diteruskan ke backend PHP CeritaKita.
+            Set variabel Supabase agar data langsung tersimpan di backend CeritaKita.
           </p>
         )}
       </div>

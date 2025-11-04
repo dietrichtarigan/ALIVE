@@ -80,7 +80,7 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
   const helperDescription =
     variant === "public"
       ? "Isi form berikut untuk mengajukan info INFOPROF. Tim ARCADE akan memverifikasi sebelum tayang."
-      : "Tambahkan data karier baru ke papan INFOPROF atau perbarui melalui backend PHP.";
+      : "Tambahkan data karier baru ke papan INFOPROF dan simpan langsung ke Supabase.";
 
   function resolveMessage(data: unknown, fallback: string) {
     if (data && typeof data === "object") {
@@ -114,8 +114,8 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
           throw new Error(resolveMessage(data, "Gagal mengirim data ke backend INFOPROF."));
         }
 
-        setStatus("success");
-        setMessage(resolveMessage(data, "Info berhasil dikirim ke pipeline INFOPROF."));
+  setStatus("success");
+  setMessage(resolveMessage(data, "Info berhasil dikirim ke pipeline INFOPROF."));
 
         if (!formState.id) {
           setFormState(defaultState);
@@ -143,7 +143,7 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
       setMessage(
         data?.message ||
           (data?.fallback
-            ? "Backend belum aktif. Data tersimpan lokal untuk pengecekan sementara."
+            ? "Supabase belum aktif. Data tersimpan lokal untuk pengecekan sementara."
             : "Info berhasil dikirim ke pipeline INFOPROF."),
       );
 
@@ -347,7 +347,7 @@ export function JobForm({ variant = "public", onSuccess, initialValues, authToke
         )}
         {!backendClient.isConfigured() && (
           <p className="text-xs text-muted-foreground">
-            Set environment <code>NEXT_PUBLIC_ARCADE_BACKEND</code> agar data langsung diteruskan ke backend PHP.
+            Set variabel Supabase (<code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>, dan <code>SUPABASE_ANON_KEY</code>) agar data langsung tersimpan.
           </p>
         )}
       </div>

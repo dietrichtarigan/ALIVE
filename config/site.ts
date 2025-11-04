@@ -23,45 +23,45 @@ export const siteConfig = {
   },
   backend: {
     baseUrl:
-      process.env.NEXT_PUBLIC_ARCADE_BACKEND?.replace(/\/$/, "") || "",
+      process.env.NEXT_PUBLIC_ARCADE_BACKEND?.replace(/\/$/, "") || "/api",
     auth: {
       login:
         process.env.NEXT_PUBLIC_ARCADE_AUTH_LOGIN_ENDPOINT ||
-        "/auth/login.php",
+        "/admin/login",
       logout:
         process.env.NEXT_PUBLIC_ARCADE_AUTH_LOGOUT_ENDPOINT ||
-        "/auth/logout.php",
+        "/admin/logout",
       profile:
         process.env.NEXT_PUBLIC_ARCADE_AUTH_PROFILE_ENDPOINT ||
-        "/auth/profile.php",
+        "/admin/profile",
     },
     jobs: {
       list:
         process.env.NEXT_PUBLIC_ARCADE_JOBS_LIST_ENDPOINT ||
-        "/jobs/list.php",
+        "/infoprof",
       create:
         process.env.NEXT_PUBLIC_ARCADE_JOBS_CREATE_ENDPOINT ||
-        "/jobs/create.php",
+        "/infoprof",
       update:
         process.env.NEXT_PUBLIC_ARCADE_JOBS_UPDATE_ENDPOINT ||
-        "/jobs/update.php",
+        "/infoprof",
       remove:
         process.env.NEXT_PUBLIC_ARCADE_JOBS_DELETE_ENDPOINT ||
-        "/jobs/delete.php",
+        "/infoprof",
     },
     stories: {
       list:
         process.env.NEXT_PUBLIC_ARCADE_STORIES_LIST_ENDPOINT ||
-        "/stories/list.php",
+        "/cerita",
       create:
         process.env.NEXT_PUBLIC_ARCADE_STORIES_CREATE_ENDPOINT ||
-        "/stories/create.php",
+        "/cerita",
       update:
         process.env.NEXT_PUBLIC_ARCADE_STORIES_UPDATE_ENDPOINT ||
-        "/stories/update.php",
+        "/cerita",
       remove:
         process.env.NEXT_PUBLIC_ARCADE_STORIES_DELETE_ENDPOINT ||
-        "/stories/delete.php",
+        "/cerita",
     },
   },
   stats: {

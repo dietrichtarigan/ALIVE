@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
+import { useAdminSession } from "@/components/admin/admin-session-provider";
 import { StoryForm, StoryFormPayload } from "@/components/site/forms/story-form";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { alumniStories, AlumniStory } from "@/data/stories";
+import type { AlumniStory } from "@/data/stories";
+import { alumniStories } from "@/data/stories";
 import { backendClient } from "@/lib/backend";
 
 interface StatusMessage {
@@ -46,35 +48,33 @@ export function AdminStoriesManager() {
   const [status, setStatus] = useState<StatusMessage | null>(null);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
   const [selectedStory, setSelectedStory] = useState<AlumniStory | null>(null);
+  const { token } = useAdminSession();
 
   const formKey = useMemo(() => `${formMode}-${selectedStory?.id ?? "new"}`, [formMode, selectedStory?.id]);
 
-  useEffect(() => {
-    void loadStories();
-  }, []);
-
-  async function loadStories() {
+  const loadStories = useCallback(async () => {
     setLoading(true);
 
     try {
-      if (!backendClient.isConfigured()) {
-        setStories(alumniStories);
-        setStatus({
-          type: "info",
-          message: "Backend belum aktif. Menampilkan cerita contoh untuk pengembangan.",
-        });
-        return;
-      }
-
-  const { status: httpStatus, data } = await backendClient.stories.list();
+      const { status: httpStatus, data } = await backendClient.stories.list(token);
 
       if (httpStatus >= 400) {
         throw new Error(resolveMessage(data, "Gagal memuat cerita dari backend."));
       }
 
-      const records = extractArray<AlumniStory>(data);
-      setStories(records);
-      setStatus(null);
+  const records = extractArray<AlumniStory>(data);
+  const fallback = Boolean(data && typeof data === "object" && (data as Record<string, unknown>).fallback);
+      const message = resolveMessage(data, "");
+
+  setStories(fallback ? alumniStories : records);
+      setStatus(
+        fallback
+          ? {
+              type: "info",
+              message: message || "Supabase belum dikonfigurasi. Menampilkan cerita contoh.",
+            }
+          : null,
+      );
     } catch (error) {
       setStatus({
         type: "error",
@@ -83,7 +83,11 @@ export function AdminStoriesManager() {
     } finally {
       setLoading(false);
     }
-  }
+  }, [token]);
+
+  useEffect(() => {
+    void loadStories();
+  }, [loadStories]);
 
   async function handleDelete(story: AlumniStory) {
     const confirmation = window.confirm(`Hapus cerita "${story.title}" dari CeritaKita?`);
@@ -91,17 +95,8 @@ export function AdminStoriesManager() {
       return;
     }
 
-    if (!backendClient.isConfigured()) {
-      setStories((prev) => prev.filter((item) => item.id !== story.id));
-      setStatus({
-        type: "info",
-        message: "Backend belum aktif. Cerita dihapus dari tampilan lokal saja.",
-      });
-      return;
-    }
-
     try {
-  const { status: httpStatus, data } = await backendClient.stories.remove({ id: story.id });
+      const { status: httpStatus, data } = await backendClient.stories.remove({ id: story.id }, token);
       if (httpStatus >= 400) {
         throw new Error(resolveMessage(data, "Gagal menghapus cerita."));
       }
@@ -260,6 +255,7 @@ export function AdminStoriesManager() {
             variant="admin"
             initialValues={selectedStory ?? undefined}
             onSuccess={handleSuccess}
+            authToken={token}
           />
         </CardContent>
       </Card>

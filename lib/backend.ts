@@ -6,7 +6,7 @@ const backendConfigured = Boolean(backend.baseUrl);
 
 function buildUrl(path: string) {
   if (!backend.baseUrl) {
-    throw new Error("Backend base URL is not configured. Set NEXT_PUBLIC_ARCADE_BACKEND.");
+    throw new Error("Backend base URL is not configured. Pastikan NEXT_PUBLIC_ARCADE_BACKEND diarahkan ke /api.");
   }
   return `${backend.baseUrl}${path}`;
 }
@@ -24,7 +24,7 @@ async function proxyRequest(
     return {
       status: 501,
       data: {
-        error: "ARCADE backend is not configured. Set NEXT_PUBLIC_ARCADE_BACKEND to enable live data.",
+        error: "ARCADE backend belum dikonfigurasi. Pastikan NEXT_PUBLIC_ARCADE_BACKEND mengarah ke /api dan Supabase aktif.",
       },
     };
   }
@@ -104,7 +104,7 @@ export const backendClient = {
       proxyRequest(
         backend.jobs.update,
         {
-          method: "POST",
+          method: "PUT",
           body: JSON.stringify(payload),
         },
         { token },
@@ -113,7 +113,7 @@ export const backendClient = {
       proxyRequest(
         backend.jobs.remove,
         {
-          method: "POST",
+          method: "DELETE",
           body: JSON.stringify(payload),
         },
         { token },
@@ -141,7 +141,7 @@ export const backendClient = {
       proxyRequest(
         backend.stories.update,
         {
-          method: "POST",
+          method: "PUT",
           body: JSON.stringify(payload),
         },
         { token },
@@ -150,7 +150,7 @@ export const backendClient = {
       proxyRequest(
         backend.stories.remove,
         {
-          method: "POST",
+          method: "DELETE",
           body: JSON.stringify(payload),
         },
         { token },
