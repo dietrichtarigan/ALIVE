@@ -1,9 +1,15 @@
 @import "tailwindcss";
 @import "../styles/utils.css";
+@import "../styles/quantum-theme.css";
 
 @import "tw-animate-css";
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================
+   QUANTUM CANVAS THEME - ARCADE HIMAFI
+   Modern Cosmic Design System
+   ============================================ */
 
 @theme inline {
   --color-brand: var(--brand);

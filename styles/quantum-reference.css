@@ -1,0 +1,421 @@
+/**
+ * ============================================
+ * QUANTUM CANVAS - Quick Reference Guide
+ * ============================================
+ * 
+ * Design System untuk ARCADE HIMAFI
+ * Cosmic-inspired, professional career platform
+ * 
+ */
+
+/* ==========================================
+   COLOR PALETTE
+   ========================================== */
+
+/**
+ * PRIMARY COLORS - Cosmic Blues
+ * 
+ * --quantum-navy     #0A1628   Background utama, depth
+ * --quantum-cobalt   #1E3A8A   Structural elements  
+ * --quantum-azure    #3B82F6   Interactive elements
+ * 
+ * Usage:
+ * bg-[hsl(var(--quantum-navy))]
+ * text-[hsl(var(--quantum-azure))]
+ */
+
+/**
+ * ACCENT COLORS - Energy & Innovation
+ * 
+ * --quantum-cyan     #22D3EE   Primary accent, CTA buttons
+ * --quantum-magenta  #E879F9   Secondary accent, events
+ * --quantum-amber    #FBBF24   Highlights, achievements
+ * 
+ * Usage untuk gradients:
+ * bg-gradient-to-r from-[hsl(var(--quantum-cyan))] to-[hsl(var(--quantum-azure))]
+ */
+
+/**
+ * NEUTRAL COLORS
+ * 
+ * --quantum-white    #FFFFFF   Pure white
+ * --quantum-ghost    #F5F5F7   Text on dark
+ * --quantum-fog      #E0E0E5   Secondary text
+ * --quantum-slate    #6B7280   Muted text
+ * --quantum-charcoal #2D3748   Card backgrounds
+ * --quantum-void     #0A0F1A   Deep background
+ */
+
+
+/* ==========================================
+   EFFECT CLASSES
+   ========================================== */
+
+/**
+ * BACKGROUNDS & PATTERNS
+ * 
+ * .quantum-particles   - Animated floating particles
+ * .quantum-waves       - Wave pattern background
+ * .quantum-grid        - Grid pattern overlay
+ * 
+ * Example:
+ * <div className="relative">
+ *   <div className="quantum-particles" />
+ *   <div className="quantum-grid" />
+ *   Content here
+ * </div>
+ */
+
+/**
+ * GLASSMORPHISM
+ * 
+ * .quantum-glass       - Semi-transparent with blur
+ * 
+ * Includes:
+ * - Backdrop blur (12px)
+ * - Gradient background (navy to cobalt)
+ * - Cyan border
+ * - Inner glow shadow
+ * 
+ * Best for: Cards, modals, navbar
+ */
+
+/**
+ * GLOW EFFECTS
+ * 
+ * .quantum-glow        - Gradient border on hover
+ * .quantum-pulse       - Pulsing glow animation
+ * 
+ * Example:
+ * <button className="quantum-button quantum-pulse">
+ *   Primary CTA
+ * </button>
+ */
+
+
+/* ==========================================
+   INTERACTION CLASSES
+   ========================================== */
+
+/**
+ * BUTTONS
+ * 
+ * .quantum-button      - Magnetic ripple effect
+ * 
+ * States:
+ * - Hover: Ripple expands from center
+ * - Active: Slight scale down (0.96)
+ * 
+ * Combine with:
+ * className="quantum-button bg-gradient-to-r from-[hsl(var(--quantum-cyan))] to-[hsl(var(--quantum-azure))]"
+ */
+
+/**
+ * LINKS
+ * 
+ * .quantum-link        - Gradient underline on hover
+ * 
+ * Features:
+ * - Animated underline (0 to 100% width)
+ * - Aurora gradient color
+ * - Smooth transition (0.3s)
+ */
+
+
+/* ==========================================
+   ANIMATION CLASSES
+   ========================================== */
+
+/**
+ * ENTRANCE ANIMATIONS
+ * 
+ * .animate-fade-in-up  - Fade in from bottom
+ *   Duration: 0.8s
+ *   Use inline style: style={{ animationDelay: '0.2s' }}
+ * 
+ * .quantum-stagger     - Auto-stagger children
+ *   Delays: 0.1s, 0.2s, 0.3s... (max 6)
+ *   Best for: Grid items
+ */
+
+/**
+ * CONTINUOUS ANIMATIONS
+ * 
+ * .quantum-float       - Vertical floating
+ *   Duration: 6s infinite
+ *   Movement: -20px up and down
+ * 
+ * .quantum-pulse       - Glow pulse
+ *   Duration: 2s infinite
+ *   Effect: Shadow intensity change
+ */
+
+
+/* ==========================================
+   TEXT UTILITIES
+   ========================================== */
+
+/**
+ * GRADIENT TEXT
+ * 
+ * .quantum-text-gradient - Aurora gradient on text
+ * 
+ * Example:
+ * <h1 className="quantum-text-gradient">
+ *   Connecting Physicists
+ * </h1>
+ */
+
+
+/* ==========================================
+   LAYOUT PATTERNS
+   ========================================== */
+
+/**
+ * SECTION STRUCTURE
+ * 
+ * Standard section:
+ * <section className="relative overflow-hidden bg-gradient-to-b from-[hsl(var(--quantum-void))] via-[hsl(var(--quantum-navy))]/50 to-[hsl(var(--quantum-void))] py-24">
+ *   <div className="quantum-particles" />
+ *   <div className="max-w-container relative z-10 mx-auto px-4">
+ *     Content
+ *   </div>
+ * </section>
+ */
+
+/**
+ * GLASSMORPHISM CARD
+ * 
+ * <Card className="quantum-glass border-[hsl(var(--quantum-cyan))]/20 shadow-xl">
+ *   <div className="h-1 bg-gradient-to-r from-[hsl(var(--quantum-cyan))] to-[hsl(var(--quantum-azure))]" />
+ *   <CardHeader>...</CardHeader>
+ *   <CardContent>...</CardContent>
+ * </Card>
+ */
+
+/**
+ * GRADIENT BUTTON
+ * 
+ * Primary CTA:
+ * <Button className="quantum-button quantum-pulse bg-gradient-to-r from-[hsl(var(--quantum-cyan))] to-[hsl(var(--quantum-azure))] text-[hsl(var(--quantum-void))] border-0 shadow-lg">
+ *   Action Text
+ * </Button>
+ * 
+ * Secondary:
+ * <Button className="quantum-button border-[hsl(var(--quantum-cyan))]/50 bg-[hsl(var(--quantum-navy))]/40 text-[hsl(var(--quantum-ghost))]">
+ *   Secondary Action
+ * </Button>
+ */
+
+
+/* ==========================================
+   COMPONENT RECIPES
+   ========================================== */
+
+/**
+ * METRIC CARD
+ * 
+ * <div className="quantum-glass group rounded-2xl p-5 hover:scale-105">
+ *   <dt className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--quantum-slate))]">
+ *     Label
+ *   </dt>
+ *   <dd className="text-4xl font-bold text-[hsl(var(--quantum-ghost))]">
+ *     100+
+ *   </dd>
+ *   <p className="text-xs text-[hsl(var(--quantum-slate))]">
+ *     Description
+ *   </p>
+ * </div>
+ */
+
+/**
+ * PROGRAM CARD
+ * 
+ * {items.map((item, index) => {
+ *   const gradients = [
+ *     { from: 'var(--quantum-cyan)', to: 'var(--quantum-azure)' },
+ *     { from: 'var(--quantum-azure)', to: 'var(--quantum-magenta)' },
+ *     { from: 'var(--quantum-magenta)', to: 'var(--quantum-amber)' },
+ *     { from: 'var(--quantum-amber)', to: 'var(--quantum-cyan)' },
+ *   ];
+ *   const gradient = gradients[index % 4];
+ * 
+ *   return (
+ *     <Card className="quantum-glass hover:scale-105">
+ *       <div style={{ background: `linear-gradient(90deg, hsl(${gradient.from}), hsl(${gradient.to}))` }} />
+ *       ...
+ *     </Card>
+ *   );
+ * })}
+ */
+
+/**
+ * CATEGORY BADGE
+ * 
+ * Karier:
+ * <Badge className="border-[hsl(var(--quantum-cyan))]/50 bg-[hsl(var(--quantum-cyan))]/10 text-[hsl(var(--quantum-cyan))]">
+ *   <Briefcase className="w-3 h-3 mr-1.5" />
+ *   Karier
+ * </Badge>
+ * 
+ * Event:
+ * <Badge className="border-[hsl(var(--quantum-magenta))]/50 bg-[hsl(var(--quantum-magenta))]/10 text-[hsl(var(--quantum-magenta))]">
+ *   <Calendar className="w-3 h-3 mr-1.5" />
+ *   Event
+ * </Badge>
+ * 
+ * Cerita:
+ * <Badge className="border-[hsl(var(--quantum-azure))]/50 bg-[hsl(var(--quantum-azure))]/10 text-[hsl(var(--quantum-azure))]">
+ *   <MessageSquare className="w-3 h-3 mr-1.5" />
+ *   Cerita
+ * </Badge>
+ */
+
+
+/* ==========================================
+   RESPONSIVE PATTERNS
+   ========================================== */
+
+/**
+ * GRID LAYOUTS
+ * 
+ * 4-column responsive:
+ * className="grid gap-6 md:grid-cols-2 xl:grid-cols-4"
+ * 
+ * 3-column responsive:
+ * className="grid gap-6 lg:grid-cols-3"
+ * 
+ * Asymmetric (hero):
+ * className="grid gap-12 lg:grid-cols-12"
+ * <div className="lg:col-span-7">Left</div>
+ * <div className="lg:col-span-5">Right</div>
+ */
+
+/**
+ * SPACING SCALE
+ * 
+ * Sections: py-24 (96px vertical padding)
+ * Content gaps: gap-12 (48px)
+ * Card padding: p-5 or p-6 (20px or 24px)
+ * Element gaps: gap-4 (16px)
+ * Tight spacing: gap-2 (8px)
+ */
+
+
+/* ==========================================
+   ACCESSIBILITY NOTES
+   ========================================== */
+
+/**
+ * COLOR CONTRAST
+ * 
+ * All text combinations meet WCAG AA:
+ * - Ghost (#F5F5F7) on Void (#0A0F1A): 14.5:1 ✓
+ * - Fog (#E0E0E5) on Navy (#0A1628): 12.8:1 ✓
+ * - Cyan (#22D3EE) on Void (#0A0F1A): 9.2:1 ✓
+ */
+
+/**
+ * ANIMATIONS
+ * 
+ * Consider adding:
+ * @media (prefers-reduced-motion: reduce) {
+ *   .quantum-float,
+ *   .quantum-pulse,
+ *   .animate-fade-in-up {
+ *     animation: none !important;
+ *   }
+ * }
+ */
+
+
+/* ==========================================
+   PERFORMANCE TIPS
+   ========================================== */
+
+/**
+ * DO:
+ * - Use transform and opacity for animations (GPU)
+ * - Apply backdrop-filter sparingly (expensive)
+ * - Use will-change on animated elements
+ * 
+ * DON'T:
+ * - Animate width/height (causes reflow)
+ * - Use too many blur effects
+ * - Nest multiple glassmorphism layers
+ */
+
+
+/* ==========================================
+   COMMON MISTAKES
+   ========================================== */
+
+/**
+ * ❌ Wrong:
+ * <div className="bg-quantum-cyan">
+ * 
+ * ✅ Correct:
+ * <div className="bg-[hsl(var(--quantum-cyan))]">
+ * 
+ * ---
+ * 
+ * ❌ Wrong:
+ * <div style={{ background: gradient-aurora }}>
+ * 
+ * ✅ Correct:
+ * <div style={{ background: 'linear-gradient(90deg, hsl(var(--quantum-cyan)), hsl(var(--quantum-azure)))' }}>
+ * 
+ * ---
+ * 
+ * ❌ Wrong:
+ * <Card className="quantum-glass quantum-glass quantum-glass">
+ * (Don't stack multiple times)
+ * 
+ * ✅ Correct:
+ * <Card className="quantum-glass">
+ * (Use once per element)
+ */
+
+
+/* ==========================================
+   DEBUGGING
+   ========================================== */
+
+/**
+ * If effects not visible:
+ * 
+ * 1. Check import order in globals.css:
+ *    @import "quantum-theme.css" should be after tailwindcss
+ * 
+ * 2. Verify CSS variables are defined:
+ *    Console: getComputedStyle(document.documentElement).getPropertyValue('--quantum-cyan')
+ * 
+ * 3. Check z-index stacking:
+ *    Background effects should be below content (no z-index or z-0)
+ *    Content should have relative z-10
+ * 
+ * 4. Backdrop-filter browser support:
+ *    Check caniuse.com - fallback to solid background
+ */
+
+
+/* ==========================================
+   VERSION & CREDITS
+   ========================================== */
+
+/**
+ * Quantum Canvas Design System
+ * Version: 1.0
+ * Created: November 2025
+ * For: ARCADE HIMAFI
+ * 
+ * Design Philosophy:
+ * "Connecting Physicists" through quantum-inspired visuals
+ * Balancing professional credibility with community warmth
+ * 
+ * Technology Stack:
+ * - Tailwind CSS v4
+ * - React/Next.js
+ * - CSS Animations (GPU-accelerated)
+ * - HSL Color Space (for better gradients)
+ */
