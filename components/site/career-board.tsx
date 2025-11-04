@@ -73,6 +73,17 @@ export default function CareerBoard({ jobs }: CareerBoardProps) {
               key={job.id}
               className="group flex h-full flex-col justify-between rounded-3xl border border-border/40 bg-background/95 shadow-[0_22px_55px_-32px_rgba(15,23,42,0.55)] transition duration-300 ease-out hover:-translate-y-1.5 hover:border-primary/40 hover:shadow-[0_30px_70px_-28px_rgba(15,23,42,0.6)]"
             >
+              {job.posterUrl ? (
+                <div className="relative h-40 w-full overflow-hidden rounded-t-3xl border-b border-border/40 bg-muted/30">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- Storage poster preview uses plain img with dynamic source */}
+                  <img
+                    src={job.posterUrl}
+                    alt={`Poster ${job.title}`}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : null}
               <CardHeader className="space-y-5 p-6 pb-4">
                 <div className="flex items-center justify-between">
                   <Badge variant="outline" className="border-primary/40 text-xs uppercase tracking-wide text-primary">
@@ -138,6 +149,16 @@ export default function CareerBoard({ jobs }: CareerBoardProps) {
                   Lokasi: {selectedJob.location} • Batas akhir {dateFormatter.format(new Date(selectedJob.deadline))}
                 </SheetDescription>
               </SheetHeader>
+              {selectedJob.posterUrl ? (
+                <div className="overflow-hidden rounded-xl border border-border/40">
+                  {/* eslint-disable-next-line @next/next/no-img-element -- Storage poster preview uses plain img with dynamic source */}
+                  <img
+                    src={selectedJob.posterUrl}
+                    alt={`Poster ${selectedJob.title}`}
+                    className="w-full object-cover"
+                  />
+                </div>
+              ) : null}
               <div className="space-y-5 text-sm leading-relaxed">
                 {selectedJob.highlight ? (
                   <div className="rounded-xl border border-primary/30 bg-primary/5 p-4 text-sm text-slate-800">

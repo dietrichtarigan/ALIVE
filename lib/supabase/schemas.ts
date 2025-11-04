@@ -10,7 +10,7 @@ export const jobPayloadSchema = z.object({
     required_error: "Kategori harus dipilih.",
     invalid_type_error: "Kategori tidak valid.",
   }),
-  description: z.string().trim().min(20, "Deskripsi minimal 20 karakter."),
+  description: z.string().trim().min(1, "Deskripsi wajib diisi."),
   requirements: z.array(z.string().trim().min(1)).min(1, "Minimal satu persyaratan."),
   deadline: z
     .string()
@@ -22,6 +22,16 @@ export const jobPayloadSchema = z.object({
   link: z.string().trim().url("Tautan harus berupa URL yang valid."),
   tags: z.array(z.string().trim().min(1)).default([]),
   highlight: z.string().trim().max(200).optional().or(z.literal("")),
+  posterUrl: z
+    .string()
+    .trim()
+    .url("Poster harus berupa URL yang valid.")
+    .optional()
+    .or(z.literal(""))
+    .or(z.null()),
+  posterPath: z.string().trim().optional().or(z.literal(""))
+    .or(z.null()),
+  removePoster: z.boolean().optional(),
 });
 
 export const jobCreateSchema = jobPayloadSchema;
@@ -38,7 +48,7 @@ const storyBaseSchema = z.object({
   role: z.string().trim().min(2, "Peran wajib diisi."),
   company: z.string().trim().min(2, "Perusahaan wajib diisi."),
   location: z.string().trim().min(2, "Lokasi wajib diisi."),
-  summary: z.string().trim().min(20, "Ringkasan minimal 20 karakter."),
+  summary: z.string().trim().min(1, "Ringkasan wajib diisi."),
   tags: z.array(z.string().trim().min(1)).default([]),
   quote: z.string().trim().min(10, "Kutipan minimal 10 karakter."),
   body: z.array(z.string().trim().min(1)).min(1, "Isi cerita wajib diisi."),

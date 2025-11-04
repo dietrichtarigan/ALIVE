@@ -34,6 +34,8 @@ export function mapJobRow(row: JobRow): JobPosting {
     link: row.link,
     tags: normaliseStringArray(row.tags),
     highlight: row.highlight,
+    posterUrl: row.poster_url,
+    posterPath: row.poster_path,
   };
 }
 

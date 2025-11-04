@@ -31,7 +31,8 @@ async function proxyRequest(
 
   const url = buildUrl(path);
   const headers = new Headers(init.headers ?? {});
-  if (!headers.has("Content-Type")) {
+  const isFormDataBody = typeof FormData !== "undefined" && init.body instanceof FormData;
+  if (!headers.has("Content-Type") && !isFormDataBody) {
     headers.set("Content-Type", "application/json");
   }
   if (options.token) {
@@ -96,7 +97,7 @@ export const backendClient = {
         backend.jobs.create,
         {
           method: "POST",
-          body: JSON.stringify(payload),
+          body: typeof FormData !== "undefined" && payload instanceof FormData ? payload : JSON.stringify(payload),
         },
         { token },
       ),
@@ -105,7 +106,7 @@ export const backendClient = {
         backend.jobs.update,
         {
           method: "PUT",
-          body: JSON.stringify(payload),
+          body: typeof FormData !== "undefined" && payload instanceof FormData ? payload : JSON.stringify(payload),
         },
         { token },
       ),

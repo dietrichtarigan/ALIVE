@@ -13,4 +13,6 @@ export interface JobPosting {
   link: string;
   tags: string[];
   highlight?: string | null;
+  posterUrl?: string | null;
+  posterPath?: string | null;
 }

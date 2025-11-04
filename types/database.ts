@@ -378,6 +378,8 @@ export interface Database {
           link: string
           tags: string[] | null
           highlight: string | null
+          poster_url: string | null
+          poster_path: string | null
           created_by: string | null
           created_at: string
           updated_at: string
@@ -395,6 +397,8 @@ export interface Database {
           link: string
           tags?: string[] | null
           highlight?: string | null
+          poster_url?: string | null
+          poster_path?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
@@ -412,6 +416,8 @@ export interface Database {
           link?: string
           tags?: string[] | null
           highlight?: string | null
+          poster_url?: string | null
+          poster_path?: string | null
           created_by?: string | null
           created_at?: string
           updated_at?: string
