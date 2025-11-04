@@ -3,6 +3,21 @@ import { NextRequest } from "next/server";
 import { getSupabaseAnonClient, getSupabaseServiceRoleClient, isSupabaseConfigured } from "./server-client";
 import { AdminUserProfile } from "./types";
 
+const allowedAdminEmailSet = new Set(
+  (process.env.ADMIN_ALLOWED_EMAILS ?? "")
+    .split(",")
+    .map((email) => email.trim().toLowerCase())
+    .filter((email) => email.length > 0),
+);
+
+function isAllowedAdminEmail(email: string | null | undefined) {
+  if (!email) {
+    return false;
+  }
+
+  return allowedAdminEmailSet.has(email.trim().toLowerCase());
+}
+
 class AdminAuthError extends Error {
   status: number;
 
@@ -26,6 +41,7 @@ function extractToken(request: NextRequest) {
 function resolveRole(user: Record<string, unknown>) {
   const appMetadata = (user.app_metadata ?? {}) as Record<string, unknown>;
   const userMetadata = (user.user_metadata ?? {}) as Record<string, unknown>;
+  const email = typeof user.email === "string" ? user.email : undefined;
 
   const directRole = appMetadata.role ?? userMetadata.role;
 
@@ -42,6 +58,10 @@ function resolveRole(user: Record<string, unknown>) {
   }
 
   if (userMetadata.is_admin === true) {
+    return "admin";
+  }
+
+  if (isAllowedAdminEmail(email)) {
     return "admin";
   }
 
@@ -111,7 +131,10 @@ export async function requireAdmin(request: NextRequest) {
   const role = resolveRole(data.user as unknown as Record<string, unknown>);
 
   if (!role || role.toLowerCase() !== "admin") {
-    throw new AdminAuthError("Pengguna tidak memiliki hak admin.", 403);
+    const email = typeof data.user.email === "string" ? data.user.email : undefined;
+    if (!isAllowedAdminEmail(email)) {
+      throw new AdminAuthError("Pengguna tidak memiliki hak admin.", 403);
+    }
   }
 
   const profile: AdminUserProfile = {
