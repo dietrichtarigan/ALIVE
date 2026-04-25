@@ -31,13 +31,6 @@ const listAccentClasses = [
   "bg-gradient-to-br from-rose-200/30 via-rose-100/20 to-transparent",
 ];
 
-function toTitleCase(value: string) {
-  return value
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
 function asPercent(count: number) {
   if (!alumniInsights.totalAlumni) return 0;
   return Math.round((count / alumniInsights.totalAlumni) * 100);
@@ -91,15 +84,17 @@ export default function AlumniDatabasePage() {
   const topIndustries = alumniInsights.topIndustries;
   const topFunctions = alumniInsights.topJobFunctions;
   const topCompanies = alumniInsights.topCompanies;
-  const topDegrees = alumniInsights.topDegrees.filter((item) => item.name !== "Other");
   const topUniversities = alumniInsights.topUniversities;
-  const topFields = alumniInsights.topFields.filter((item) => item.name && item.name !== "None");
+  const topGraduationYears = alumniInsights.topGraduationYears;
+  const confidenceBreakdown = alumniInsights.confidenceBreakdown;
   const topCountries = alumniInsights.topCountries;
   const topCities = alumniInsights.topCities;
-  const topSkills = alumniInsights.topSkills.map((item) => ({
-    ...item,
-    name: toTitleCase(item.name),
-  }));
+  const dataCoverageItems: RankedItem[] = [
+    { name: "Punya jabatan saat ini", count: alumniInsights.dataCoverage.withTitle },
+    { name: "Punya perusahaan saat ini", count: alumniInsights.dataCoverage.withCompany },
+    { name: "Punya industri", count: alumniInsights.dataCoverage.withIndustry },
+    { name: "Punya lokasi", count: alumniInsights.dataCoverage.withLocation },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/50">
@@ -118,7 +113,7 @@ export default function AlumniDatabasePage() {
                 Satu data emas untuk memahami karier alumni Fisika ITB
               </h1>
               <p className="max-w-3xl text-[18px] leading-[1.75] text-slate-600">
-                Dataset semi-terstruktur hasil scraping LinkedIn alumni Fisika ITB yang siap diolah menjadi dashboard interaktif dan fondasi
+                Dataset master hasil konsolidasi Excel alumni Fisika ITB yang siap diolah menjadi dashboard interaktif dan fondasi
                 <span className="font-semibold text-slate-800"> HIMAFI Career Planner AI</span>. Semua insight terhubung ke JSON sehingga mudah di-update otomatis.
               </p>
             </div>
@@ -170,9 +165,9 @@ export default function AlumniDatabasePage() {
                 <span className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-purple-100 text-purple-700">
                   <BarChart3 className="size-5" aria-hidden />
                 </span>
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Katalog skill</p>
-                <p className="text-[32px] font-semibold text-slate-900">{alumniInsights.uniqueSkills}</p>
-                <p className="text-sm text-slate-600">Skill unik yang bisa dipetakan ke kurikulum pengembangan mahasiswa.</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">Confidence High</p>
+                <p className="text-[32px] font-semibold text-slate-900">{asPercent(confidenceBreakdown.find((item) => item.name === "High")?.count ?? 0)}%</p>
+                <p className="text-sm text-slate-600">Proporsi profil dengan keyakinan data tertinggi dari proses merge master.</p>
               </CardContent>
             </Card>
           </div>
@@ -200,13 +195,13 @@ export default function AlumniDatabasePage() {
           <div className="space-y-4">
             <h2 className="text-[2.4rem] font-semibold tracking-tight text-slate-950">Education and Academic Path</h2>
             <p className="max-w-3xl text-[16px] leading-[1.75] text-slate-600">
-              Jalur studi lanjut membantu tim akademik dan alumni merancang mentoring, beasiswa, serta kolaborasi riset.
+              Dataset master alumni juga memberi gambaran kohort angkatan, institusi pendidikan tertinggi, dan kualitas confidence data.
             </p>
           </div>
           <div className="grid gap-6 lg:grid-cols-3">
-            <RankedList title="Degree Breakdown" items={topDegrees} />
-            <RankedList title="Top Universities" subtitle="Kampus tujuan utama" items={topUniversities} />
-            <RankedList title="Fields of Study" subtitle="Bidang yang dipilih setelah Fisika" items={topFields} />
+            <RankedList title="Top Angkatan" subtitle="Sebaran kohort lulusan pada master sheet" items={topGraduationYears} />
+            <RankedList title="Top Institutions" subtitle="Highest education yang tercatat" items={topUniversities} />
+            <RankedList title="Confidence Breakdown" subtitle="Kualitas keyakinan data per profil" items={confidenceBreakdown} />
           </div>
         </div>
       </Section>
@@ -216,7 +211,7 @@ export default function AlumniDatabasePage() {
           <div className="space-y-4">
             <h2 className="text-[2.4rem] font-semibold tracking-tight text-slate-950">Geographic and Skills Insight</h2>
             <p className="max-w-3xl text-[16px] leading-[1.75] text-slate-600">
-              Insight lokasi dan skill membuka peluang kolaborasi global serta menyorot kompetensi unggulan alumni HIMAFI.
+              Insight lokasi dan coverage atribut membantu menentukan prioritas enrichment data alumni untuk dashboard lanjutan.
             </p>
           </div>
           <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
@@ -224,7 +219,7 @@ export default function AlumniDatabasePage() {
               <RankedList title="Top Countries" items={topCountries} />
               <RankedList title="Top Cities" items={topCities} />
             </div>
-            <RankedList title="Most Mentioned Skills" subtitle="Tokenisasi dari kolom skills LinkedIn" items={topSkills} />
+            <RankedList title="Data Coverage" subtitle="Kelengkapan atribut penting pada master" items={dataCoverageItems} />
           </div>
         </div>
       </Section>

@@ -2,22 +2,22 @@ import alumniRaw from "@/data-alumni.json";
 
 export interface AlumniRecord {
   name: string;
-  headline?: string;
-  location?: string;
+  headline?: string | null;
+  location?: string | null;
   connections?: string;
   about?: string;
   experiences?: Array<{
-    position?: string;
-    company?: string;
-    duration?: string;
-    location?: string;
-    description?: string;
+    position?: string | null;
+    company?: string | null;
+    duration?: string | null;
+    location?: string | null;
+    description?: string | null;
   }>;
   education?: Array<{
-    school?: string;
-    degree?: string;
-    field_of_study?: string;
-    duration?: string;
+    school?: string | null;
+    degree?: string | null;
+    field_of_study?: string | null;
+    duration?: string | null;
     thesis?: string;
     activities?: string;
     grade?: string;
@@ -38,6 +38,13 @@ export interface AlumniRecord {
     linkedin_url?: string;
   };
   last_updated?: string;
+  graduation_year?: number | null;
+  industry?: string | null;
+  current_company?: string | null;
+  confidence?: string | null;
+  source_batches?: string | null;
+  source_url?: string | null;
+  merge_key?: string | null;
 }
 
 export interface RankedItem {
@@ -46,83 +53,6 @@ export interface RankedItem {
 }
 
 const alumniDataset = (alumniRaw as AlumniRecord[]).filter((item) => Boolean(item?.name));
-
-const industryKeywords: Array<{ label: string; keywords: string[] }> = [
-  {
-    label: "Energy & Manufacturing",
-    keywords: ["energy", "petro", "chemical", "smelter", "mining", "metall", "manufact", "plant", "calibration", "pulp", "paper", "gas", "oil"],
-  },
-  {
-    label: "Finance & Banking",
-    keywords: ["bank", "treasury", "finance", "trading", "capital", "investment", "exchange", "sekuritas", "financial"],
-  },
-  {
-    label: "Research & Academia",
-    keywords: ["research", "lecturer", "assistant", "postdoctoral", "professor", "laboratory", "postdoc", "academy", "scientist", "universit"],
-  },
-  {
-    label: "Technology & Software",
-    keywords: ["software", "engineer", "developer", "data", "machine learning", "ai", "iot", "digital", "program", "technology", "it"],
-  },
-  {
-    label: "Consulting & Strategy",
-    keywords: ["consult", "strategy", "business development", "advisor", "analyst", "management", "planner"],
-  },
-  {
-    label: "Education & Training",
-    keywords: ["teacher", "trainer", "mentor", "education", "academy", "school"],
-  },
-  {
-    label: "Healthcare & Bio",
-    keywords: ["health", "medical", "clinic", "biomed", "pharma", "wellness"],
-  },
-];
-
-const jobFunctionKeywords: Array<{ label: string; keywords: string[] }> = [
-  {
-    label: "Engineer / Specialist",
-    keywords: ["engineer", "engineering", "specialist", "technical", "metallurg", "process", "maintenance", "developer", "scientist"],
-  },
-  {
-    label: "Research & Academia",
-    keywords: ["research", "lecturer", "assistant", "postdoctoral", "professor", "academic", "scientist"],
-  },
-  {
-    label: "Product & Project",
-    keywords: ["product", "project", "program", "delivery", "implementation", "scrum"],
-  },
-  {
-    label: "Management & Leadership",
-    keywords: ["manager", "head", "lead", "chief", "director", "founder", "ceo"],
-  },
-  {
-    label: "Finance & Trading",
-    keywords: ["treasury", "trader", "finance", "analyst", "bank"],
-  },
-  {
-    label: "Education & Training",
-    keywords: ["teacher", "trainer", "mentor", "instructor", "coach"],
-  },
-  {
-    label: "Data & Analytics",
-    keywords: ["data", "analytics", "business intelligence", "bi", "insight", "analyst"],
-  },
-];
-
-function textBucket(alumni: AlumniRecord) {
-  const experienceText = alumni.experiences?.map((exp) => `${exp.position ?? ""} ${exp.company ?? ""}`).join(" ") ?? "";
-  return `${alumni.headline ?? ""} ${experienceText}`.toLowerCase();
-}
-
-function classifyFromKeywords(alumni: AlumniRecord, dictionary: Array<{ label: string; keywords: string[] }>, fallback = "Lainnya") {
-  const bucket = textBucket(alumni);
-  for (const entry of dictionary) {
-    if (entry.keywords.some((keyword) => bucket.includes(keyword))) {
-      return entry.label;
-    }
-  }
-  return fallback;
-}
 
 function cleanValue(value?: string | null) {
   if (!value) return undefined;
@@ -147,112 +77,96 @@ function sortCounts(counts: Map<string, number>, limit: number) {
     .slice(0, limit);
 }
 
-function extractCountry(rawLocation?: string) {
+function extractCountry(rawLocation?: string | null) {
   if (!rawLocation) return undefined;
-  const parts = rawLocation.split(",").map((part) => part.trim()).filter(Boolean);
+  const parts = rawLocation
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
   if (!parts.length) return undefined;
-  const guess = parts[parts.length - 1];
-  return guess.length <= 2 ? undefined : guess;
+  return parts[parts.length - 1];
 }
 
-function extractCity(rawLocation?: string) {
+function extractCity(rawLocation?: string | null) {
   if (!rawLocation) return undefined;
-  const parts = rawLocation.split(",").map((part) => part.trim()).filter(Boolean);
+  const parts = rawLocation
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
   if (!parts.length) return undefined;
   return parts[0];
 }
 
-function parseConnections(rawConnections?: string) {
-  if (!rawConnections) return undefined;
-  const digits = rawConnections.replace(/[^\d]/g, "");
-  if (!digits) return undefined;
-  const parsed = Number.parseInt(digits, 10);
-  return Number.isNaN(parsed) ? undefined : parsed;
+function parseGraduationYear(alumni: AlumniRecord) {
+  if (typeof alumni.graduation_year === "number") {
+    return String(alumni.graduation_year);
+  }
+  const duration = cleanValue(alumni.education?.[0]?.duration);
+  if (!duration) return undefined;
+  const yearMatch = duration.match(/\b(19|20)\d{2}\b/);
+  return yearMatch?.[0];
 }
 
-function parseDegreeLabel(degree?: string) {
-  const value = cleanValue(degree)?.toLowerCase();
-  if (!value) return undefined;
+function parseEducationLevel(alumni: AlumniRecord) {
+  const source = cleanValue(alumni.education?.[0]?.school);
+  if (!source) return undefined;
+  const value = source.toLowerCase();
   if (value.includes("phd") || value.includes("doctor")) return "Doctoral";
-  if (value.includes("master") || value.includes("magister") || value.includes("msa")) return "Master";
-  if (value.includes("mba")) return "MBA";
-  if (value.includes("bachelor") || value.includes("sarjana") || value.includes("b.sc")) return "Bachelor";
+  if (value.includes("master") || value.includes("mba") || value.includes("magister")) return "Master";
+  if (value.includes("bachelor") || value.includes("sarjana") || value.includes("undergraduate")) return "Bachelor";
   return "Other";
 }
 
-function normalizeSkills(alumni: AlumniRecord) {
-  return (alumni.skills ?? [])
-    .map((skill) => cleanValue(skill)?.replace(/[()]/g, ""))
-    .filter((skill): skill is string => Boolean(skill))
-    .map((skill) => skill!.toLowerCase());
-}
-
-const industryCounts = countBy(alumniDataset, (alumni) => classifyFromKeywords(alumni, industryKeywords));
-const jobFunctionCounts = countBy(alumniDataset, (alumni) => classifyFromKeywords(alumni, jobFunctionKeywords));
-const companyCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.experiences?.[0]?.company) ?? cleanValue(alumni.experiences?.find((exp) => exp.company)?.company));
-const degreeCounts = countBy(alumniDataset, (alumni) => parseDegreeLabel(alumni.education?.[0]?.degree));
-const universityCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.education?.[0]?.school));
-const fieldsCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.education?.[0]?.field_of_study));
-const countryCounts = countBy(alumniDataset, (alumni) => extractCountry(alumni.location) ?? extractCountry(alumni.education?.[0]?.duration));
+const industryCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.industry));
+const companyCounts = countBy(
+  alumniDataset,
+  (alumni) => cleanValue(alumni.current_company) ?? cleanValue(alumni.experiences?.[0]?.company),
+);
+const titleCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.headline));
+const educationCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.education?.[0]?.school));
+const yearCounts = countBy(alumniDataset, (alumni) => parseGraduationYear(alumni));
+const confidenceCounts = countBy(alumniDataset, (alumni) => cleanValue(alumni.confidence) ?? "Unknown");
+const countryCounts = countBy(alumniDataset, (alumni) => extractCountry(alumni.location));
 const cityCounts = countBy(alumniDataset, (alumni) => extractCity(alumni.location));
-const skillsCounts = countBy(alumniDataset.flatMap((alumni) => normalizeSkills(alumni)), (skill) => skill);
+const degreeCounts = countBy(alumniDataset, (alumni) => parseEducationLevel(alumni));
 
-const advancedDegreeCount = alumniDataset.filter((alumni) =>
-  alumni.education?.some((edu) => {
-    const degree = cleanValue(edu.degree)?.toLowerCase();
-    if (!degree) return false;
-    return degree.includes("master") || degree.includes("mba") || degree.includes("magister") || degree.includes("phd") || degree.includes("doctor");
-  }),
+const withIndustry = alumniDataset.filter((alumni) => Boolean(cleanValue(alumni.industry))).length;
+const withLocation = alumniDataset.filter((alumni) => Boolean(cleanValue(alumni.location))).length;
+const withTitle = alumniDataset.filter((alumni) => Boolean(cleanValue(alumni.headline))).length;
+const withCompany = alumniDataset.filter(
+  (alumni) => Boolean(cleanValue(alumni.current_company) ?? cleanValue(alumni.experiences?.[0]?.company)),
 ).length;
 
-const uniqueSkills = skillsCounts.size;
-
-const connectionValues = alumniDataset
-  .map((alumni) => parseConnections(alumni.connections))
-  .filter((value): value is number => typeof value === "number");
-
-const averageConnections = connectionValues.length
-  ? Math.round(connectionValues.reduce((acc, value) => acc + value, 0) / connectionValues.length)
-  : undefined;
-
-const leadershipKeywords = ["head", "lead", "manager", "chief", "director", "principal", "vp", "ceo", "founder"];
-const leadershipCount = alumniDataset.filter((alumni) => {
-  const bucket = textBucket(alumni);
-  return leadershipKeywords.some((keyword) => bucket.includes(keyword));
+const advancedStudyCount = alumniDataset.filter((alumni) => {
+  const school = cleanValue(alumni.education?.[0]?.school)?.toLowerCase() ?? "";
+  return school.includes("master") || school.includes("mba") || school.includes("doctor") || school.includes("phd");
 }).length;
-
-const leadershipShare = alumniDataset.length ? Math.round((leadershipCount / alumniDataset.length) * 100) : 0;
-
-const internationalCount = alumniDataset.filter((alumni) => {
-  const country = extractCountry(alumni.location);
-  if (!country) return false;
-  return !/indonesia/i.test(country);
-}).length;
-
-const internationalShare = alumniDataset.length ? Math.round((internationalCount / alumniDataset.length) * 100) : 0;
-
-const countriesRepresented = countryCounts.size;
 
 export const alumniInsights = {
   totalAlumni: alumniDataset.length,
-  advancedStudyShare: alumniDataset.length ? Math.round((advancedDegreeCount / alumniDataset.length) * 100) : 0,
-  topIndustries: sortCounts(industryCounts, 6),
-  topJobFunctions: sortCounts(jobFunctionCounts, 6),
-  topCompanies: sortCounts(companyCounts, 8),
+  advancedStudyShare: alumniDataset.length ? Math.round((advancedStudyCount / alumniDataset.length) * 100) : 0,
+  dataCoverage: {
+    withIndustry,
+    withLocation,
+    withTitle,
+    withCompany,
+  },
+  topGraduationYears: sortCounts(yearCounts, 10),
+  topIndustries: sortCounts(industryCounts, 8),
+  topJobFunctions: sortCounts(titleCounts, 8),
+  topCompanies: sortCounts(companyCounts, 10),
   topDegrees: sortCounts(degreeCounts, 5),
-  topUniversities: sortCounts(universityCounts, 6),
-  topFields: sortCounts(fieldsCounts, 6),
-  topCountries: sortCounts(countryCounts, 6),
-  topCities: sortCounts(cityCounts, 6),
-  topSkills: sortCounts(skillsCounts, 12),
-  uniqueSkills,
+  topUniversities: sortCounts(educationCounts, 8),
+  topCountries: sortCounts(countryCounts, 8),
+  topCities: sortCounts(cityCounts, 8),
+  confidenceBreakdown: sortCounts(confidenceCounts, 4),
 };
 
 export type AlumniInsights = typeof alumniInsights;
 export const alumniRecords = alumniDataset;
 export const alumniHighlights = {
-  leadershipShare,
-  internationalShare,
-  countriesRepresented,
-  averageConnections,
+  countriesRepresented: countryCounts.size,
+  citiesRepresented: cityCounts.size,
+  industriesRepresented: industryCounts.size,
+  yearsRepresented: yearCounts.size,
 };
