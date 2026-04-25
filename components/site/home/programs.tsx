@@ -1,6 +1,6 @@
+import { ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import { type ComponentType } from "react";
-import { ArrowUpRight } from "lucide-react";
 
 import { SectionHeading } from "@/components/site/section-heading";
 import { Badge } from "@/components/ui/badge";

@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
 import { Sparkles } from "lucide-react";
+import { type ReactNode } from "react";
 
 interface SectionHeadingProps {
   eyebrow?: string;
